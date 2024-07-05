@@ -25,3 +25,9 @@ class Repository(models.Model):
     group_id = models.IntegerField()
     url = models.URLField()
     created_at = models.DateTimeField(auto_now_add=True)
+
+
+class RepositoryMember(models.Model):
+    repository_id = models.IntegerField()
+    username = models.CharField(max_length=100)
+    role = models.CharField(max_length=100)

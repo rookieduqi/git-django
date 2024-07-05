@@ -1,6 +1,6 @@
 # serializers.py
 from rest_framework import serializers
-from .models import RepositoryGroup, GroupMember, Repository
+from .models import RepositoryGroup, GroupMember, Repository, RepositoryMember
 
 
 class RepositoryGroupSerializer(serializers.ModelSerializer):
@@ -28,3 +28,14 @@ class RepositorySerializer(serializers.ModelSerializer):
             return group.name
         except RepositoryGroup.DoesNotExist:
             return None
+
+
+# class RepositorySerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Repository
+#         fields = '__all__'
+
+class RepositoryMemberSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = RepositoryMember
+        fields = '__all__'

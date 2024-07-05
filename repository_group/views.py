@@ -1,9 +1,10 @@
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.decorators import action
-from .models import RepositoryGroup, GroupMember, Repository
-from .serializers import RepositoryGroupSerializer, GroupMemberSerializer, RepositorySerializer
-
+from .models import RepositoryGroup, GroupMember, Repository, RepositoryMember
+from .serializers import RepositoryGroupSerializer, GroupMemberSerializer, RepositorySerializer, \
+    RepositoryMemberSerializer
+from rest_framework.decorators import api_view
 from rest_framework.parsers import JSONParser
 
 
@@ -98,13 +99,35 @@ class RepositoryViewSet(viewsets.ModelViewSet):
         self.perform_destroy(instance)
         return Response({'success': True})
 
+    @action(detail=True, methods=['get', 'post'])
+    def members(self, request, pk=None):
+        if request.method == 'GET':
+            members = RepositoryMember.objects.filter(repository_id=pk)
+            serializer = RepositoryMemberSerializer(members, many=True)
+            return Response({'success': True, 'members': serializer.data})
 
-from rest_framework.decorators import api_view
+        elif request.method == 'POST':
+            data = request.data.copy()
+            data['repository_id'] = pk
+            serializer = RepositoryMemberSerializer(data=data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response({'success': True, 'member': serializer.data}, status=status.HTTP_201_CREATED)
+            return Response({'success': False, 'errors': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(detail=True, methods=['delete'], url_path='members/remove/(?P<member_id>[^/.]+)')
+    def remove_member(self, request, pk=None, member_id=None):
+        try:
+            member = RepositoryMember.objects.get(id=member_id, repository_id=pk)
+            member.delete()
+            return Response({'success': True}, status=status.HTTP_204_NO_CONTENT)
+        except RepositoryMember.DoesNotExist:
+            return Response({'success': False, 'message': 'Member not found'}, status=status.HTTP_404_NOT_FOUND)
 
 
-@api_view(['GET'])
-def get_server_ip(request):
-    import socket
-    hostname = socket.gethostname()
-    ip_address = socket.gethostbyname(hostname)
-    return Response({'success': True, 'ip': ip_address})
+class ServerIpViewSet(viewsets.ViewSet):
+    def list(self, request):
+        import socket
+        hostname = socket.gethostname()
+        ip_address = socket.gethostbyname(hostname)
+        return Response({'success': True, 'ip': ip_address})
