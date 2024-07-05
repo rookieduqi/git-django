@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>服务操作</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.css"/>
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.js"></script>
+</head>
+<body>
+<div class="ui menu">
+    <a class="item" href="{% url 'home' %}">主页</a>
+    <a class="item" href="{% url 'service_operations' %}">服务操作</a>
+    <a class="item" href="{% url 'user_management' %}">用户管理</a>
+</div>
+<div class="ui container">
+    <h2>服务操作</h2>
+    <div class="ui segment">
+        <p>服务状态：<span id="service-status">{{ service_status }}</span></p>
+        <p>端口号：{{ port }}</p>
+        <button id="start-service" class="ui button">启动服务</button>
+        <button id="stop-service" class="ui button">停止服务</button>
+        <button id="refresh-service-status" class="ui button">刷新服务状态</button>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $('#start-service').click(function () {
+            $.ajax({
+                url: "{% url 'start_service' %}",
+                type: "POST",
+                headers: {"X-CSRFToken": "{{ csrf_token }}"},
+                success: function (data) {
+                    alert(data.message);
+                },
+                error: function (xhr, status, error) {
+                    alert("启动服务失败：" + error);
+                }
+            });
+        });
+
+        $('#stop-service').click(function () {
+            $.ajax({
+                url: "{% url 'stop_service' %}",
+                type: "POST",
+                headers: {"X-CSRFToken": "{{ csrf_token }}"},
+                success: function (data) {
+                    alert(data.message);
+                },
+                error: function (xhr, status, error) {
+                    alert("停止服务失败：" + error);
+                }
+            });
+        });
+
+        $('#refresh-service-status').click(function () {
+            $.ajax({
+                url: "{% url 'refresh_service_status' %}",
+                type: "POST",
+                headers: {"X-CSRFToken": "{{ csrf_token }}"},
+                success: function (data) {
+                    $('#service-status').text(data.service_status);
+                    alert("服务状态已刷新");
+                },
+                error: function (xhr, status, error) {
+                    alert("刷新服务状态失败：" + error);
+                }
+            });
+        });
+    });
+</script>
+</body>
+</html>

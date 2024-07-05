@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>用户管理</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.css"/>
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.js"></script>
+</head>
+<body>
+<div class="ui menu">
+    <a class="item" href="{% url 'home' %}">主页</a>
+    <a class="item" href="{% url 'service_operations' %}">服务操作</a>
+    <a class="item" href="{% url 'user_management' %}">用户管理</a>
+</div>
+<div class="ui container">
+    <h2>用户管理</h2>
+    <div class="ui segment">
+        <h3>用户列表</h3>
+        <table class="ui celled table">
+            <thead>
+            <tr>
+                <th>用户名</th>
+                <th>备注</th>
+                <th>创建时间</th>
+                <th>状态</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for user in users %}
+                <tr>
+                    <td>{{ user.username }}</td>
+                    <td>{{ user.remark }}</td>
+                    <td>{{ user.created_at }}</td>
+                    <td>{{ user.is_disabled|yesno:"禁用,启用" }}</td>
+                    <td>
+                        <button class="ui button edit-user" data-id="{{ user.id }}">编辑</button>
+                        <button class="ui button reset-password" data-id="{{ user.id }}">重置密码</button>
+                        <form method="post" style="display:inline;">
+                            {% csrf_token %}
+                            <input type="hidden" name="user_id" value="{{ user.id }}">
+                            <button class="ui button" name="delete_user">删除</button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <button class="ui button" id="add-user">新增用户</button>
+    </div>
+
+    <!-- Modals -->
+    <div class="ui modal" id="add-user-modal">
+        <div class="header">新增用户</div>
+        <div class="content">
+            <form method="post" class="ui form">
+                {% csrf_token %}
+                {{ user_form.as_p }}
+                <button type="submit" name="add_user" class="ui button">提交</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="ui modal" id="edit-user-modal">
+        <div class="header">编辑用户</div>
+        <div class="content">
+            <form method="post" class="ui form">
+                {% csrf_token %}
+                <input type="hidden" name="user_id" id="edit-user-id">
+                {{ edit_user_form.as_p }}
+                <button type="submit" name="edit_user" class="ui button">提交</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="ui modal" id="reset-password-modal">
+        <div class="header">重置密码</div>
+        <div class="content">
+            <form method="post" class="ui form">
+                {% csrf_token %}
+                <input type="hidden" name="user_id" id="reset-password-user-id">
+                {{ reset_password_form.as_p }}
+                <button type="submit" name="reset_password" class="ui button">提交</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $('#add-user').click(function () {
+            $('#add-user-modal').modal('show');
+        });
+
+        $('.edit-user').click(function () {
+            var userId = $(this).data('id');
+            $('#edit-user-id').val(userId);
+            $('#edit-user-modal').modal('show');
+        });
+
+        $('.reset-password').click(function () {
+            var userId = $(this).data('id');
+            $('#reset-password-user-id').val(userId);
+            $('#reset-password-modal').modal('show');
+        });
+    });
+</script>
+</body>
+</html>
