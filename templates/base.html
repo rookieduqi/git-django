@@ -16,6 +16,10 @@
     <script src="{% static '/static/js/user_management.js' %}"></script>
     <script src="{% static '/static/js/repository_group_management.js' %}"></script>
     <script src="{% static '/static/js/repository_management.js' %}"></script>
+    <script src="{% static '/static/js/branch_management.js' %}"></script>
+    <script src="{% static '/static/js/hook_management.js' %}"></script>
+    <script src="{% static '/static/js/import_repository.js' %}"></script>
+    <script src="{% static '/static/js/web_hook_record.js' %}"></script>
 </head>
 
 <body>
@@ -26,6 +30,10 @@
     <a class="item" href="#" id="user-management-link">用户管理</a>
     <a class="item" href="#" id="repository-group-management-link">仓库组管理</a>
     <a class="item" href="#" id="repository-management-link">仓库管理</a>
+    <a class="item" href="#" id="branch-management-link">分支管理</a>
+    <a class="item" href="#" id="hook-management-link">HOOK管理</a>
+    <a class="item" href="#" id="import-repository-link">导入仓库</a>
+    <a class="item" href="#" id="web-hook-record-link">Webhook管理</a>
 </div>
 <div class="ui container" id="content-container">
     <div class="ui segment">
@@ -38,6 +46,10 @@
             <button class="ui primary button" onclick="loadUserManagement()">用户管理</button>
             <button class="ui primary button" onclick="loadRepositoryGroupManagement()">仓库组管理</button>
             <button class="ui primary button" onclick="loadRepositoryManagement()">仓库管理</button>
+            <button class="ui primary button" onclick="loadBranchManagement()">分支管理</button>
+            <button class="ui primary button" onclick="loadHookManagement()">HOOK管理</button>
+            <button class="ui primary button" onclick="loadImportRepository()">导入仓库</button>
+            <button class="ui primary button" onclick="loadWebhookManagement()">Webhook管理</button>
         </div>
     </div>
     {#    <p>你好</p>#}
@@ -64,6 +76,22 @@
 
         $('#repository-management-link').click(function () {
             loadRepositoryManagement();
+        });
+
+        $('#branch-management-link').click(function () {
+            loadBranchManagement();
+        });
+
+        $('#hook-management-link').click(function () {
+            loadHookManagement();
+        });
+
+        $('#import-repository-link').click(function () {
+            loadImportRepository();
+        });
+
+        $('#web-hook-record-link').click(function () {
+            loadWebhookManagement();
         });
     });
 </script>

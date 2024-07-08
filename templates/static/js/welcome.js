@@ -8,6 +8,12 @@ function loadHomePage() {
             <div class="ui center aligned container">
                 <button class="ui primary button" onclick="loadServiceOperations()">服务操作</button>
                 <button class="ui primary button" onclick="loadUserManagement()">用户管理</button>
+                <button class="ui primary button" onclick="loadRepositoryGroupManagement()">仓库组管理</button>
+                <button class="ui primary button" onclick="loadRepositoryManagement()">仓库管理</button>
+                <button class="ui primary button" onclick="loadBranchManagement()">分支管理</button>
+                <button class="ui primary button" onclick="loadHookManagement()">HOOK管理</button>
+                <button class="ui primary button" onclick="loadImportRepository()">导入仓库</button>
+                <button class="ui primary button" onclick="loadWebhookManagement()">Webhook管理</button>
             </div>
         </div>
     `);

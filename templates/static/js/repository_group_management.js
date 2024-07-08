@@ -210,7 +210,10 @@ function loadGroupMembers(groupId) {
                 <form id="add-member-form" method="post" class="ui form">
                     <div class="field">
                         <label>用户名</label>
-                        <input type="text" name="username" placeholder="用户名">
+                        <select name="username">
+                            <!-- 用户选项将通过AJAX加载 -->
+                        </select>
+<!--                        <input type="text" name="username" placeholder="用户名">-->
                     </div>
                     <input type="hidden" name="group" value="${groupId}">
                 </form>
@@ -225,6 +228,7 @@ function loadGroupMembers(groupId) {
     });
 
     $('#add-member-button').click(function () {
+        loadUsers();
         $('#add-member-modal').modal('show');
     });
 
@@ -244,7 +248,7 @@ function loadGroupMembers(groupId) {
                     $('#add-member-modal').modal('hide').remove();
                     loadGroupMembers(groupId);
                 } else {
-                    alert('添加成员失败: ' + response.message);
+                    alert('添加成员失败: ' + response.errors);
                 }
             },
             error: function (xhr, status, error) {
@@ -292,6 +296,21 @@ function loadGroupMembers(groupId) {
             });
         } else {
             alert('加载成员列表失败: ' + response.message);
+        }
+    });
+}
+
+function loadUsers() {
+    $.get('/api/users/list_usernames/', function (response) {
+        if (response.success) {
+            var users = response.users;
+            var options = '';
+            users.forEach(function (user) {
+                options += `<option value="${user}">${user}</option>`;
+            });
+            $('select[name="username"]').html(options);
+        } else {
+            alert('加载用户列表失败: ' + response.message);
         }
     });
 }
