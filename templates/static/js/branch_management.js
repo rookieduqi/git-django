@@ -45,9 +45,7 @@ function loadBranchManagement() {
                     </div>
                     <div class="field">
                         <label>所属仓库</label>
-                        <select name="repository_id">
-                            <!-- 仓库选项将通过AJAX加载 -->
-                        </select>
+                        <input type="text" name="repository_name" placeholder="所属仓库">
                     </div>
                 </form>
                 <button type="button" class="ui button" id="add-branch-submit">提交</button>
@@ -73,9 +71,7 @@ function loadBranchManagement() {
                     </div>
                     <div class="field">
                         <label>所属仓库</label>
-                        <select name="repository_id" id="edit-branch-repo">
-                            <!-- 仓库选项将通过AJAX加载 -->
-                        </select>
+                        <input type="text" name="repository_name" placeholder="所属仓库" readonly>
                     </div>
                 </form>
                 <button type="button" class="ui button" id="edit-branch-submit">提交</button>
@@ -86,9 +82,7 @@ function loadBranchManagement() {
 
     // 绑定新增分支按钮点击事件
     $('#add-branch-button').click(function () {
-        loadRepositories();
         $('#add-branch-modal').modal('show');
-        bindBranchFormEvents();
     });
 
     // 绑定新增分支提交按钮点击事件
@@ -149,42 +143,39 @@ function loadBranchManagement() {
             // 绑定编辑按钮事件
             $('.edit-button').click(function () {
                 var branchId = $(this).data('id');
-                loadRepositories(function () {
-                    // 获取分支信息并加载到编辑表单
-                    $.get('/api/branches/' + branchId + '/', function (response) {
-                        if (response.success) {
-                            var branch = response.branch;
-                            $('#edit-branch-form input[name="name"]').val(branch.name);
-                            $('#edit-branch-form input[name="sync_branch"]').val(branch.sync_branch);
-                            $('#edit-branch-form input[name="remark"]').val(branch.remark);
-                            $('#edit-branch-form select[name="repository_id"]').val(branch.repository_id);
-                            $('#edit-branch-modal').modal('show');
-                            bindEditBranchFormEvents();
-                        } else {
-                            alert('加载分支信息失败: ' + response.message);
-                        }
-                    });
+                $.get('/api/branches/' + branchId + '/', function (response) {
+                    if (response.success) {
+                        var branch = response.branch;
+                        $('#edit-branch-form input[name="name"]').val(branch.name);
+                        $('#edit-branch-form input[name="sync_branch"]').val(branch.sync_branch);
+                        $('#edit-branch-form input[name="remark"]').val(branch.remark);
+                        $('#edit-branch-form input[name="repository_name"]').val(branch.repository_name);
+                        $('#edit-branch-modal').modal('show');
+                        bindEditBranchFormEvents(branchId);
+                    } else {
+                        alert('加载分支信息失败: ' + response.message);
+                    }
+                });
 
-                    // 绑定编辑分支提交按钮点击事件
-                    $('#edit-branch-submit').click(function () {
-                        var formData = getFormData('#edit-branch-form');
-                        $.ajax({
-                            url: '/api/branches/' + branchId + '/',
-                            type: 'PUT',
-                            data: JSON.stringify(formData),
-                            contentType: 'application/json',
-                            success: function (response) {
-                                if (response.success) {
-                                    $('#edit-branch-modal').modal('hide').remove();
-                                    loadBranchManagement();
-                                } else {
-                                    alert('编辑分支失败: ' + response.message);
-                                }
-                            },
-                            error: function (xhr, status, error) {
-                                alert('请求失败: ' + error);
+                // 绑定编辑分支提交按钮点击事件
+                $('#edit-branch-submit').click(function () {
+                    var formData = getFormData('#edit-branch-form');
+                    $.ajax({
+                        url: '/api/branches/' + branchId + '/',
+                        type: 'PUT',
+                        data: JSON.stringify(formData),
+                        contentType: 'application/json',
+                        success: function (response) {
+                            if (response.success) {
+                                $('#edit-branch-modal').modal('hide').remove();
+                                loadBranchManagement();
+                            } else {
+                                alert('编辑分支失败: ' + response.message);
                             }
-                        });
+                        },
+                        error: function (xhr, status, error) {
+                            alert('请求失败: ' + error);
+                        }
                     });
                 });
             });
@@ -219,30 +210,6 @@ function loadBranchManagement() {
             alert('加载分支列表失败: ' + response.message);
         }
     });
-}
-
-function loadRepositories(callback) {
-    $.get('/api/repositories/', function (response) {
-        if (response.success) {
-            var repositories = response.repositories;
-            var options = '';
-            repositories.forEach(function (repository) {
-                options += `<option value="${repository.id}">${repository.name}</option>`;
-            });
-            $('select[name="repository_id"]').html(options);
-            if (callback) callback();
-        } else {
-            alert('加载仓库列表失败: ' + response.message);
-        }
-    });
-}
-
-function bindBranchFormEvents() {
-    // 绑定任何你需要的表单事件
-}
-
-function bindEditBranchFormEvents() {
-    // 绑定任何你需要的表单事件
 }
 
 function getFormData(formSelector) {

@@ -70,7 +70,7 @@ function loadRepositoryManagement() {
                     </div>
                     <div class="field">
                         <label>仓库组</label>
-                        <select name="group_id" id="edit-repo-group">
+                        <select name="group_id" id="edit-repo-group" readonly>
                             <!-- 仓库组选项将通过AJAX加载 -->
                         </select>
                     </div>
@@ -224,6 +224,7 @@ function loadRepositoryManagement() {
 
 function loadRepositoryGroups(callback) {
     $.get('/api/repository_groups/', function (response) {
+        console.log("/api/repository_groups/");
         if (response.success) {
             var groups = response.groups;
             var options = '';

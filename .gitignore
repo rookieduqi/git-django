@@ -1,0 +1,57 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Django stuff:
+*.log
+*.pot
+*.pyc
+*.pyo
+*.pyd
+*.sqlite3
+db.sqlite3
+
+# If you are using PostgreSQL:
+*.pgsql
+
+# If you are using MySQL:
+*.myd
+*.myi
+*.err
+
+# Ignore the virtual environment directory
+venv/
+env/
+
+# Ignore IDE and editor-specific files
+.vscode/
+.idea/
+
+# Ignore system files
+.DS_Store
+Thumbs.db
+
+# Ignore any compiled and minified CSS/JS
+*.min.js
+*.min.css
+*.compiled.js
+*.compiled.css
+
+# Ignore environment variable files
+.env
+
+# Ignore macOS system files
+.DS_Store
+
+# Ignore Jupyter Notebooks checkpoints
+.ipynb_checkpoints
+
+# Ignore any secrets
+secrets.json
+
+# Ignore any built files
+build/
+dist/
+*.egg-info/
+

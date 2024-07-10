@@ -33,7 +33,7 @@ function loadWebhookManagement() {
 function loadWebhookTriggerRecords() {
     $.get('/api/webhook-trigger-records/', function (response) {
         if (response.success) {
-            var records = response.results;
+            var records = response.hooks;
             var recordList = '';
             records.forEach(function (record) {
                 recordList += `

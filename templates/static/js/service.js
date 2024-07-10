@@ -1,32 +1,66 @@
+// static/js/service.js
+
 function loadServiceOperations() {
-    const serviceOperationsHTML = `
-        <div class="ui segment">
+    $('#content-container').html(`
+        <div class="ui container">
             <h2>服务操作</h2>
-            <p>服务状态：<span id="service-status">未知</span></p>
-            <p>端口号：<span id="service-port">8000</span></p>
-            <button class="ui button" id="start-service-button">启动服务</button>
-            <button class="ui button" id="stop-service-button">停止服务</button>
-            <button class="ui button" id="refresh-service-status-button">刷新服务状态</button>
+            <div class="ui segment">
+                <h3>服务状态: <span id="service-status">未知</span></h3>
+                <h4>端口号: <span id="service-port">8000</span></h4>
+                <button class="ui primary button" id="start-service">启动服务</button>
+                <button class="ui primary button" id="stop-service">停止服务</button>
+                <button class="ui primary button" id="refresh-service-status">刷新状态</button>
+            </div>
         </div>
-    `;
+    `);
 
-    $('#content-container').html(serviceOperationsHTML);
+    function refreshServiceStatus() {
+        $.ajax({
+            url: '/serviceops/refresh/',
+            method: 'GET',
+            success: function (response) {
+                console.log(response);
+                $('#service-status').text(response.service_status);
+                $('#service-port').text(response.port);
+            },
+            error: function () {
+                alert('刷新服务状态失败');
+            }
+        });
+    }
 
-    $('#start-service-button').click(function () {
-        // Add logic to start service
-        alert('Service started!');
-        $('#service-status').text('运行中');
+    $('#start-service').click(function () {
+        $.ajax({
+            url: '/serviceops/start/',
+            method: 'POST',
+            success: function (response) {
+                alert(response.message);
+                refreshServiceStatus();
+            },
+            error: function () {
+                alert('启动服务失败');
+            }
+        });
     });
 
-    $('#stop-service-button').click(function () {
-        // Add logic to stop service
-        alert('Service stopped!');
-        $('#service-status').text('已停止');
+    $('#stop-service').click(function () {
+        $.ajax({
+            url: '/serviceops/stop/',
+            method: 'POST',
+            success: function (response) {
+                alert(response.message);
+                refreshServiceStatus();
+            },
+            error: function () {
+                alert('停止服务失败');
+            }
+        });
     });
 
-    $('#refresh-service-status-button').click(function () {
-        // Add logic to refresh service status
-        alert('Service status refreshed!');
-        $('#service-status').text('未知');
+    $('#refresh-service-status').click(function () {
+        refreshServiceStatus();
     });
+
+    // 初始加载时刷新服务状态
+    refreshServiceStatus();
 }

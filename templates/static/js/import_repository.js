@@ -48,6 +48,8 @@ function loadImportRepository() {
         }
 
         var formData = getFormData('#import-repo-form');
+        formData.authenticated = authenticated; // 添加是否认证的值
+
         $.ajax({
             url: '/api/import-repository/',
             type: 'POST',
@@ -56,6 +58,8 @@ function loadImportRepository() {
             success: function (response) {
                 if (response.success) {
                     alert('仓库导入成功');
+                    $('#import-repo-form')[0].reset(); // 清空输入框
+                    $('.ui.checkbox').checkbox('uncheck'); // 取消选中复选框
                 } else {
                     alert('仓库导入失败: ' + response.message);
                 }
@@ -78,6 +82,4 @@ function getFormData(formSelector) {
     return indexed_array;
 }
 
-
 loadImportRepository();
-

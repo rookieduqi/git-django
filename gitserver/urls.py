@@ -23,5 +23,5 @@ urlpatterns = [
     path('', include('user.urls')),
     path('api/', include('repository_group.urls')),
     # path('repository_groups/', include('repository_group.urls')),
-    # path('serviceops/', include('serviceops.urls')),
+    path('serviceops/', include('serviceops.urls')),
 ]
