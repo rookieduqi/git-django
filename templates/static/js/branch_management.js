@@ -15,6 +15,7 @@ function loadBranchManagement() {
                             <th>同步分支</th>
                             <th>备注</th>
                             <th>所属仓库</th>
+                            <th>所属仓库组</th>
                             <th>创建时间</th>
                             <th>操作</th>
                         </tr>
@@ -47,6 +48,10 @@ function loadBranchManagement() {
                         <label>所属仓库</label>
                         <input type="text" name="repository_name" placeholder="所属仓库">
                     </div>
+                    <div class="field">
+                        <label>所属仓库组</label>
+                        <input type="text" name="repository_group_name" placeholder="所属仓库组">
+                    </div>
                 </form>
                 <button type="button" class="ui button" id="add-branch-submit">提交</button>
                 <button type="button" class="ui button" id="add-branch-cancel">取消</button>
@@ -73,6 +78,10 @@ function loadBranchManagement() {
                         <label>所属仓库</label>
                         <input type="text" name="repository_name" placeholder="所属仓库" readonly>
                     </div>
+                    <div class="field">
+                        <label>所属仓库组</label>
+                        <input type="text" name="repository_group_name" placeholder="所属仓库组" readonly>
+                    </div>
                 </form>
                 <button type="button" class="ui button" id="edit-branch-submit">提交</button>
                 <button type="button" class="ui button" id="edit-branch-cancel">取消</button>
@@ -98,7 +107,7 @@ function loadBranchManagement() {
                     $('#add-branch-modal').modal('hide').remove();
                     loadBranchManagement();
                 } else {
-                    alert('新增分支失败: ' + response.errors);
+                    alert('新增分支失败: ' + response.message);
                 }
             },
             error: function (xhr, status, error) {
@@ -129,6 +138,7 @@ function loadBranchManagement() {
                         <td>${branch.sync_branch}</td>
                         <td>${branch.remark}</td>
                         <td>${branch.repository_name}</td>
+                        <td>${branch.repository_group_name}</td>
                         <td>${branch.created_at}</td>
                         <td>
                             <button class="ui button edit-button" data-id="${branch.id}">编辑</button>
@@ -150,6 +160,7 @@ function loadBranchManagement() {
                         $('#edit-branch-form input[name="sync_branch"]').val(branch.sync_branch);
                         $('#edit-branch-form input[name="remark"]').val(branch.remark);
                         $('#edit-branch-form input[name="repository_name"]').val(branch.repository_name);
+                        $('#edit-branch-form input[name="repository_group_name"]').val(branch.repository_group_name);
                         $('#edit-branch-modal').modal('show');
                         bindEditBranchFormEvents(branchId);
                     } else {

@@ -16,7 +16,7 @@ import subprocess
 
 
 def handle_script_request(script_args):
-    result = subprocess.run(['python3', settings.SCRIPT_DIR, script_args], capture_output=True, text=True)
+    result = subprocess.run([settings.EDITOR_DIR, settings.SCRIPT_DIR, script_args], capture_output=True, text=True)
     if result.returncode == 0:
         try:
             script_output = json.loads(result.stdout)
@@ -155,9 +155,9 @@ def delete_user(request, user_id):
                         "user_name": user.username
                     }
                 })
-
                 # Call the external script
                 success, script_output = handle_script_request(script_args)
+
 
                 if success:
                     user.delete()

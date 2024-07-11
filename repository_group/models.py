@@ -37,6 +37,7 @@ class Repository(models.Model):
 
     class Meta:
         db_table = 'repository'
+        # unique_together = ('name', 'group_id')  # 添加唯一约束
 
 
 class Role(models.Model):
@@ -72,11 +73,13 @@ class Branch(models.Model):
     name = models.CharField(max_length=100)
     sync_branch = models.CharField(max_length=100)
     remark = models.TextField(null=True, blank=True)
+    repository_group_id = models.IntegerField()
     repository_id = models.IntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         db_table = 'repository_branch'
+        # unique_together = ('name', 'repository_id')
 
 
 class BranchMember(models.Model):
@@ -95,6 +98,7 @@ class BranchMember(models.Model):
 
 
 class Hook(models.Model):
+    repository_group_id = models.IntegerField()
     repository_id = models.IntegerField()
     branch_name = models.CharField(max_length=100)
     hook_url = models.URLField()
@@ -118,8 +122,19 @@ class ImportedRepository(models.Model):
         db_table = 'import_repository'
 
 
+# class WebhookTriggerRecord(models.Model):
+#     hook_url = models.URLField()
+#     status = models.CharField(max_length=10)  # "成功" 或 "失败"
+#     trigger_time = models.DateTimeField(auto_now_add=True)
+#     response_content = models.TextField()
+#
+#     class Meta:
+#         db_table = 'web_hook_trigger_record'
+
 class WebhookTriggerRecord(models.Model):
     hook_url = models.URLField()
+    event = models.CharField(max_length=50)  # 新增事件类型字段
+    branch = models.CharField(max_length=100)  # 新增分支字段
     status = models.CharField(max_length=10)  # "成功" 或 "失败"
     trigger_time = models.DateTimeField(auto_now_add=True)
     response_content = models.TextField()

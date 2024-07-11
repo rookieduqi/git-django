@@ -2,7 +2,7 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from .views import RepositoryGroupViewSet, RepositoryViewSet, RoleViewSet, UserViewSet, BranchViewSet, HookViewSet, \
-    ImportRepositoryViewSet, WebhookTriggerRecordViewSet
+    ImportRepositoryViewSet, WebhookTriggerRecordViewSet, TestHookViewSet
 from .views import ServerIpViewSet
 
 router = DefaultRouter()
@@ -16,6 +16,7 @@ router.register(r'roles', RoleViewSet, basename='role')
 router.register(r'branches', BranchViewSet, basename='branch')
 
 router.register(r'hooks', HookViewSet, basename='hook')
+router.register(r'test-hooks', TestHookViewSet, basename='test-hooks')
 
 router.register(r'import-repository', ImportRepositoryViewSet, basename='importrepository')
 

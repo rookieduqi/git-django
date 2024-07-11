@@ -8,6 +8,8 @@ function loadWebhookManagement() {
                     <thead>
                         <tr>
                             <th>Hook URL</th>
+                            <th>事件类型</th>
+                            <th>分支</th>
                             <th>状态</th>
                             <th>触发时间</th>
                             <th>响应内容</th>
@@ -39,6 +41,8 @@ function loadWebhookTriggerRecords() {
                 recordList += `
                     <tr>
                         <td>${record.hook_url}</td>
+                        <td>${record.event}</td>
+                        <td>${record.branch}</td>
                         <td>${record.status}</td>
                         <td>${record.trigger_time}</td>
                         <td>${record.response_content}</td>
@@ -54,6 +58,4 @@ function loadWebhookTriggerRecords() {
     });
 }
 
-
 loadWebhookManagement();
-

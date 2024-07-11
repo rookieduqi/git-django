@@ -245,36 +245,58 @@ function bindFormEvents() {
 }
 
 function generateRepositoryUrl() {
-    $.get('/api/get_server_ip/', function (response) {
-        if (response.success) {
-            var serverIp = response.ip;
-            // var groupName = $('select[name="group_id"] option:selected').text().trim();
-            var groupName = $('#add-repo-form select[name="group_id"] option:selected').text();
-            var repoName = $('#add-repo-form input[name="name"]').val();
-            var repoUrl = `http://${serverIp}/git/${groupName}/${repoName}.git`;
-            console.log("groupName:", groupName);
-            console.log("repoName:", repoName);
-            $('#repo-url').val(repoUrl);
-        } else {
-            alert('获取服务器IP失败: ' + response.message);
-        }
-    });
+    var serverIp = window.location.hostname;
+    var groupName = $('#add-repo-form select[name="group_id"] option:selected').text();
+    var repoName = $('#add-repo-form input[name="name"]').val();
+    var repoUrl = `http://${serverIp}/git/${groupName}/${repoName}.git`;
+    console.log("groupName:", groupName);
+    console.log("repoName:", repoName);
+    $('#repo-url').val(repoUrl);
 }
-
 
 function bindEditFormEvents() {
     $('input[name="name"], select[name="group_id"]').on('change', function () {
-        var serverIp = $('#edit-repo-url').val().split('/')[2];
+        var serverIp = window.location.hostname;
         var groupName = $('#edit-repo-form select[name="group_id"] option:selected').text();
         var repoName = $('#edit-repo-form input[name="name"]').val();
         console.log("groupName:", groupName);
         console.log("repoName:", repoName);
-        // var groupName = $('select[name="group_id"] option:selected').text();
-        // var repoName = $('input[name="name"]').val().trim().replace(/\s+/g, '-');
         var repoUrl = `http://${serverIp}/git/${groupName}/${repoName}.git`;
         $('#edit-repo-url').val(repoUrl);
     });
 }
+
+// function generateRepositoryUrl() {
+//     $.get('/api/get_server_ip/', function (response) {
+//         if (response.success) {
+//             var serverIp = response.ip;
+//             // var groupName = $('select[name="group_id"] option:selected').text().trim();
+//             var groupName = $('#add-repo-form select[name="group_id"] option:selected').text();
+//             var repoName = $('#add-repo-form input[name="name"]').val();
+//             var repoUrl = `http://${serverIp}/git/${groupName}/${repoName}.git`;
+//             console.log("groupName:", groupName);
+//             console.log("repoName:", repoName);
+//             $('#repo-url').val(repoUrl);
+//         } else {
+//             alert('获取服务器IP失败: ' + response.message);
+//         }
+//     });
+// }
+//
+//
+// function bindEditFormEvents() {
+//     $('input[name="name"], select[name="group_id"]').on('change', function () {
+//         var serverIp = $('#edit-repo-url').val().split('/')[2];
+//         var groupName = $('#edit-repo-form select[name="group_id"] option:selected').text();
+//         var repoName = $('#edit-repo-form input[name="name"]').val();
+//         console.log("groupName:", groupName);
+//         console.log("repoName:", repoName);
+//         // var groupName = $('select[name="group_id"] option:selected').text();
+//         // var repoName = $('input[name="name"]').val().trim().replace(/\s+/g, '-');
+//         var repoUrl = `http://${serverIp}/git/${groupName}/${repoName}.git`;
+//         $('#edit-repo-url').val(repoUrl);
+//     });
+// }
 
 function getFormData(formSelector) {
     var unindexed_array = $(formSelector).serializeArray();

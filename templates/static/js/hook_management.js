@@ -9,6 +9,7 @@ function loadHookManagement() {
                 <table class="ui celled table">
                     <thead>
                         <tr>
+                            <th>仓库组</th>
                             <th>仓库名</th>
                             <th>分支名</th>
                             <th>Hook URL</th>
@@ -30,16 +31,16 @@ function loadHookManagement() {
             <div class="content">
                 <form id="add-hook-form" method="post" class="ui form">
                     <div class="field">
+                        <label>仓库组</label>
+                        <input type="text" name="repository_group_name" placeholder="仓库组名">
+                    </div>
+                    <div class="field">
                         <label>仓库</label>
-                        <select name="repository_id" id="add-repo-select">
-                            <!-- 仓库选项将通过AJAX加载 -->
-                        </select>
+                        <input type="text" name="repository_name" placeholder="仓库名">
                     </div>
                     <div class="field">
                         <label>分支名</label>
-                        <select name="branch_name" id="add-branch-select">
-                            <!-- 分支选项将通过AJAX加载 -->
-                        </select>
+                        <input type="text" name="branch_name" placeholder="分支名">
                     </div>
                     <div class="field">
                         <label>Hook URL</label>
@@ -53,8 +54,7 @@ function loadHookManagement() {
                         <label>触发事件</label>
                         <select name="trigger_event">
                             <option value="push">Push</option>
-                            <option value="pull_request">Pull Request</option>
-                            <option value="tag">Tag</option>
+                            <option value="pull">Pull Request</option>
                         </select>
                     </div>
                 </form>
@@ -68,16 +68,16 @@ function loadHookManagement() {
             <div class="content">
                 <form id="edit-hook-form" method="post" class="ui form">
                     <div class="field">
+                        <label>仓库组</label>
+                        <input type="text" name="repository_group_name" id="edit-repo-group-input" readonly>
+                    </div>
+                    <div class="field">
                         <label>仓库</label>
-                        <select name="repository_id" id="edit-repo-select">
-                            <!-- 仓库选项将通过AJAX加载 -->
-                        </select>
+                        <input type="text" name="repository_name" id="edit-repo-input" readonly>
                     </div>
                     <div class="field">
                         <label>分支名</label>
-                        <select name="branch_name" id="edit-branch-select">
-                            <!-- 分支选项将通过AJAX加载 -->
-                        </select>
+                        <input type="text" name="branch_name" id="edit-branch-input" readonly>
                     </div>
                     <div class="field">
                         <label>Hook URL</label>
@@ -91,8 +91,7 @@ function loadHookManagement() {
                         <label>触发事件</label>
                         <select name="trigger_event">
                             <option value="push">Push</option>
-                            <option value="pull_request">Pull Request</option>
-                            <option value="tag">Tag</option>
+                            <option value="pull">Pull Request</option>
                         </select>
                     </div>
                 </form>
@@ -104,19 +103,7 @@ function loadHookManagement() {
 
     // 绑定新增Hook按钮点击事件
     $('#add-hook-button').click(function () {
-        loadRepositories('#add-repo-select', function () {
-            loadBranches('#add-repo-select', '#add-branch-select');
-        });
         $('#add-hook-modal').modal('show');
-    });
-
-    // 绑定仓库选择事件以加载相应的分支
-    $('#content-container').on('change', '#add-repo-select', function () {
-        loadBranches('#add-repo-select', '#add-branch-select');
-    });
-
-    $('#content-container').on('change', '#edit-repo-select', function () {
-        loadBranches('#edit-repo-select', '#edit-branch-select');
     });
 
     // 绑定新增Hook提交按钮点击事件
@@ -159,6 +146,7 @@ function loadHookManagement() {
             hooks.forEach(function (hook) {
                 hookList += `
                     <tr>
+                        <td>${hook.repository_group_name}</td>
                         <td>${hook.repository_name}</td>
                         <td>${hook.branch_name}</td>
                         <td>${hook.hook_url}</td>
@@ -180,12 +168,12 @@ function loadHookManagement() {
                 $.get('/api/hooks/' + hookId + '/', function (response) {
                     if (response.success) {
                         var hook = response.hook;
-                        loadRepositories('#edit-repo-select', function () {
-                            loadBranches('#edit-repo-select', '#edit-branch-select', hook.branch_name);
-                        });
+                        $('#edit-repo-group-input').val(hook.repository_group_name);
+                        $('#edit-repo-input').val(hook.repository_name);
+                        $('#edit-branch-input').val(hook.branch_name);
                         $('#edit-hook-form input[name="hook_url"]').val(hook.hook_url);
                         $('#edit-hook-form input[name="remark"]').val(hook.remark);
-                        $('#edit-hook-form input[name="trigger_event"]').val(hook.trigger_event);
+                        $('#edit-hook-form select[name="trigger_event"]').val(hook.trigger_event);
                         $('#edit-hook-modal').modal('show');
                     } else {
                         alert('加载Hook信息失败: ' + response.message);
@@ -251,40 +239,6 @@ function loadHookManagement() {
             });
         } else {
             alert('加载Hook列表失败: ' + response.message);
-        }
-    });
-}
-
-function loadRepositories(selectSelector, callback) {
-    $.get('/api/repositories/', function (response) {
-        if (response.success) {
-            var repositories = response.repositories;
-            var options = '';
-            repositories.forEach(function (repository) {
-                options += `<option value="${repository.id}">${repository.name}</option>`;
-            });
-            $(selectSelector).html(options);
-            if (callback) callback();
-        } else {
-            alert('加载仓库列表失败: ' + response.message);
-        }
-    });
-}
-
-function loadBranches(repoSelectSelector, branchSelectSelector, selectedBranchName) {
-    var repositoryId = $(repoSelectSelector).val();
-    console.log("Loading branches for repository:", repositoryId);
-    $.get('/api/branches/?repository_id=' + repositoryId, function (response) {
-        if (response.success) {
-            var branches = response.branches;
-            var options = '';
-            branches.forEach(function (branch) {
-                var selected = (branch.name === selectedBranchName) ? 'selected' : '';
-                options += `<option value="${branch.name}" ${selected}>${branch.name}</option>`;
-            });
-            $(branchSelectSelector).html(options);
-        } else {
-            alert('加载分支列表失败: ' + response.message);
         }
     });
 }

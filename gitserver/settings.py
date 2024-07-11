@@ -25,10 +25,11 @@ SECRET_KEY = 'django-insecure-)vq51_0h#fqmje*dm_p%^*z8kh7=q3paf6x(f*66(w0l7zp%j7
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = ["*", "127.0.0.1", "localhost"]
 
-SCRIPT_DIR = "/root/test_git_server_1/main.py"
-EDITOR_DIR = "/usr/local/python3/bin/python3"
+SCRIPT_DIR = "/home/duqi/test_git_server_1/main.py"
+EDITOR_DIR = "/usr/bin/python3"
+HOOK_URL = "http://127.0.0.1:9001/api/webhook-trigger-records/"
 
 # Application definition
 
@@ -80,7 +81,7 @@ CORS_ALLOW_METHODS = (
     'PUT',
     'VIEW',
 )
- 
+
 CORS_ALLOW_HEADERS = (
     'XMLHttpRequest',
     'X_FILENAME',
@@ -93,7 +94,6 @@ CORS_ALLOW_HEADERS = (
     'x-csrftoken',
     'x-requested-with',
 )
-
 
 ROOT_URLCONF = 'gitserver.urls'
 

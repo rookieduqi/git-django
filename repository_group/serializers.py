@@ -53,6 +53,7 @@ class RepositoryMemberSerializer(serializers.ModelSerializer):
 
 class BranchSerializer(serializers.ModelSerializer):
     repository_name = serializers.SerializerMethodField()
+    repository_group_name = serializers.SerializerMethodField()
 
     class Meta:
         model = Branch
@@ -64,6 +65,13 @@ class BranchSerializer(serializers.ModelSerializer):
             repository = Repository.objects.get(id=obj.repository_id)
             return repository.name
         except Repository.DoesNotExist:
+            return None
+
+    def get_repository_group_name(self, obj):
+        try:
+            repository_group = RepositoryGroup.objects.get(id=obj.repository_group_id)
+            return repository_group.name
+        except RepositoryGroup.DoesNotExist:
             return None
 
 
@@ -94,11 +102,19 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class HookSerializer(serializers.ModelSerializer):
+    repository_group_name = serializers.SerializerMethodField()
     repository_name = serializers.SerializerMethodField()
 
     class Meta:
         model = Hook
         fields = '__all__'
+
+    def get_repository_group_name(self, obj):
+        try:
+            repository_group = RepositoryGroup.objects.get(id=obj.repository_group_id)
+            return repository_group.name
+        except RepositoryGroup.DoesNotExist:
+            return None
 
     def get_repository_name(self, obj):
         try:
@@ -113,7 +129,25 @@ class ImportRepositorySerializer(serializers.ModelSerializer):
         model = ImportedRepository
         fields = '__all__'
 
+
 class WebhookTriggerRecordSerializer(serializers.ModelSerializer):
     class Meta:
         model = WebhookTriggerRecord
         fields = '__all__'
+
+    # def create(self, validated_data):
+    #     # 使用 get 方法获取参数，如果参数不存在，则设置为空或默认值
+    #     hook_url = validated_data.get('hook_url', '')
+    #     event = validated_data.get('event', '')
+    #     branch = validated_data.get('branch', '')
+    #     status = validated_data.get('status', '')
+    #     response_content = validated_data.get('response_content', '')
+    #
+    #     # 创建新的 WebhookTriggerRecord 实例
+    #     return WebhookTriggerRecord.objects.create(
+    #         hook_url=hook_url,
+    #         event=event,
+    #         branch=branch,
+    #         status=status,
+    #         response_content=response_content
+    #     )
